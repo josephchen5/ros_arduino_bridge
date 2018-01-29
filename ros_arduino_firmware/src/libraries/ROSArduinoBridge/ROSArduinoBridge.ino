@@ -57,23 +57,29 @@
    //#define POLOLU_MC33926
 
    /* The RoboGaia encoder shield */
-   #define ROBOGAIA
+   //#define ROBOGAIA
    
    /* Encoders directly attached to Arduino board */
-   //#define ARDUINO_ENC_COUNTER
+   #define ARDUINO_ENC_COUNTER
 
    /* L298 Motor driver*/
    //#define L298_MOTOR_DRIVER
+
+   /* The Sabertooth2x25A dual motor driver shield，新增使用自己寫的 Sabertooth2x25A driver */
+   //#define Sabertooth
+
+
 #endif
 
-#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
-//#undef USE_SERVOS     // Disable use of PWM servos
+//#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
+#undef USE_SERVOS     // Disable use of PWM servos
 
 /* Serial port baud rate */
 #define BAUDRATE     57600
 
 /* Maximum PWM signal */
-#define MAX_PWM        255
+//#define MAX_PWM        255  原來的設定
+#define MAX_PWM        400
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -292,8 +298,10 @@ void loop() {
 
     // Terminate a command with a CR
     if (chr == 13) {
-      if (arg == 1) argv1[index] = NULL;
-      else if (arg == 2) argv2[index] = NULL;
+    //if (arg == 1) argv1[index] = NULL;       /*  原來的設定有bug */
+      if (arg == 1) argv1[index] = '\0';       /* 修改後 */
+    //else if (arg == 2) argv2[index] = NULL;  /*  原來的設定有bug */
+      else if (arg == 2) argv2[index] = '\0';  /* 修改後 */
       runCommand();
       resetCommand();
     }
@@ -302,7 +310,8 @@ void loop() {
       // Step through the arguments
       if (arg == 0) arg = 1;
       else if (arg == 1)  {
-        argv1[index] = NULL;
+      //argv1[index] = NULL;           /*  原來的設定有bug */         
+        argv1[index] = '\0';           /* 修改後 */
         arg = 2;
         index = 0;
       }
