@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# encoding: utf-8
 """
     A base controller class for the Arduino microcontroller
     
