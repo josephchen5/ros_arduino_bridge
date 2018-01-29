@@ -55,37 +55,48 @@
     setMotorSpeed(LEFT, leftSpeed);
     setMotorSpeed(RIGHT, rightSpeed);
   }
-#elif defined L298_MOTOR_DRIVER
+#elif defined L298_MOTOR_DRIVER  // 取代analogWrite 使用timer 產生pwm
+   #include "DualL298PMotorShield.h"
+
+  /* Create the motor driver object */
+  DualL298PMotorShield drive;
+  /* Wrap the motor driver initialization */
   void initMotorController() {
-    digitalWrite(RIGHT_MOTOR_ENABLE, HIGH);
-    digitalWrite(LEFT_MOTOR_ENABLE, HIGH);
+    drive.init();
   }
-  
+  /* Wrap the drive motor set speed function */
   void setMotorSpeed(int i, int spd) {
-    unsigned char reverse = 0;
-  
-    if (spd < 0)
-    {
-      spd = -spd;
-      reverse = 1;
-    }
-    if (spd > 255)
-      spd = 255;
-    
-    if (i == LEFT) { 
-      if      (reverse == 0) { analogWrite(RIGHT_MOTOR_FORWARD, spd); analogWrite(RIGHT_MOTOR_BACKWARD, 0); }
-      else if (reverse == 1) { analogWrite(RIGHT_MOTOR_BACKWARD, spd); analogWrite(RIGHT_MOTOR_FORWARD, 0); }
-    }
-    else /*if (i == RIGHT) //no need for condition*/ {
-      if      (reverse == 0) { analogWrite(LEFT_MOTOR_FORWARD, spd); analogWrite(LEFT_MOTOR_BACKWARD, 0); }
-      else if (reverse == 1) { analogWrite(LEFT_MOTOR_BACKWARD, spd); analogWrite(LEFT_MOTOR_FORWARD, 0); }
-    }
+    if (i == LEFT) drive.setM1Speed(spd);
+    else drive.setM2Speed(spd);
   }
   
   void setMotorSpeeds(int leftSpeed, int rightSpeed) {
     setMotorSpeed(LEFT, leftSpeed);
     setMotorSpeed(RIGHT, rightSpeed);
   }
+
+#elif defined Sabertooth //增加對Sabertooth2x25A
+   #include "Sabertooth2x25A.h"
+
+  /* Create the motor driver object */
+  Sabertooth2x25A drive;
+  /* Wrap the motor driver initialization */
+  void initMotorController() {
+    drive.init();
+  }
+
+  /* Wrap the drive motor set speed function */
+  void setMotorSpeed(int i, int spd) {
+    if (i == LEFT) drive.setM1Speed(spd);
+    else drive.setM2Speed(spd);
+  }
+
+  // A convenience function for setting both motor speeds
+  void setMotorSpeeds(int leftSpeed, int rightSpeed) {
+    setMotorSpeed(LEFT, leftSpeed);
+    setMotorSpeed(RIGHT, rightSpeed);
+  }
+
 #else
   #error A motor driver must be selected!
 #endif
