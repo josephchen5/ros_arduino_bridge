@@ -28,6 +28,37 @@ from math import sin, cos, pi
 from geometry_msgs.msg import Quaternion, Twist, Pose
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
+from std_msgs.msg import String, Int32, Float32, Bool  #  新增   #
+
+# ----dashgo_driver.py----  # 新增 POSE_COVARIANCE TWIST_COVARIANCE #
+ODOM_POSE_COVARIANCE = [0.02, 0, 0, 0, 0, 0, 
+                        0, 0.02, 0, 0, 0, 0,
+                        0, 0, 0.02, 0, 0, 0,
+                        0, 0, 0, 0.02, 0, 0,
+                        0, 0, 0, 0, 0.02, 0,
+                        0, 0, 0, 0, 0, 0.05]
+
+ODOM_POSE_COVARIANCE2 = [0.02, 0, 0, 0, 0, 0, 
+                        0, 0.02, 0, 0, 0, 0,
+                        0, 0, 0.02, 0, 0, 0,
+                        0, 0, 0, 0.02, 0, 0,
+                        0, 0, 0, 0, 0.02, 0,
+                        0, 0, 0, 0, 0, 0.05]
+
+ODOM_TWIST_COVARIANCE = [0.02, 0, 0, 0, 0, 0, 
+                        0, 0.02, 0, 0, 0, 0,
+                        0, 0, 0.02, 0, 0, 0,
+                        0, 0, 0, 0.02, 0, 0,
+                        0, 0, 0, 0, 0.02, 0,
+                        0, 0, 0, 0, 0, 0.05]
+ODOM_TWIST_COVARIANCE2 = [0.02, 0, 0, 0, 0, 0, 
+                        0, 0.02, 0, 0, 0, 0,
+                        0, 0, 0.02, 0, 0, 0,
+                        0, 0, 0, 0.02, 0, 0,
+                        0, 0, 0, 0, 0.02, 0,
+                        0, 0, 0, 0, 0, 0.05]
+
+
  
 """ Class to receive Twist commands and publish Odometry data """
 class BaseController:
@@ -183,6 +214,18 @@ class BaseController:
             odom.twist.twist.linear.x = vxy
             odom.twist.twist.linear.y = 0
             odom.twist.twist.angular.z = vth
+
+# ----dashgo_driver.py---- #  新增發布 odom topic 時，包含 COVARIANCE  #
+
+            if self.v_des_left == 0 and self.v_des_right == 0:
+                odom.pose.covariance = ODOM_POSE_COVARIANCE2
+                odom.twist.covariance = ODOM_TWIST_COVARIANCE2
+            else:
+                odom.pose.covariance = ODOM_POSE_COVARIANCE
+                odom.twist.covariance = ODOM_TWIST_COVARIANCE
+
+# ----dashgo_driver.py---- #  新增發布 odom topic 時，包含 COVARIANCE  #
+
 
             self.odomPub.publish(odom)
             
